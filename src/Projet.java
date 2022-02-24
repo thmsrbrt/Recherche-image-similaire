@@ -10,9 +10,14 @@ import java.util.*;
 
 public class Projet {
     private static TreeMap<Double, String> imageMap = new TreeMap<>();
-    private static String racine = "/Users/thomasrobert/Documents_IUT/Semestre4/Image/TD-image/Projet/Images/";
+    private static String racine = "/Users/thomasrobert/Documents_IUT/Semestre4/Image/TD-image/Recherche img similaire/Images/";
     private static BDD base;
 
+    /**
+     *
+     * @param img image d'entrée
+     * @return une image d'ébruité avec le filtre médian
+     */
     public static Image filtreMedian(Image img) {
         int largeur = img.getXDim();
         int hauteur = img.getYDim();
@@ -48,11 +53,11 @@ public class Projet {
     }
 
     /**
-     *
-     * @param image entré en parametre
+     * Crée un histogramme RGB à partir d'une image
+     * @param image d'entrée
      * @return un tableau de TAILLE [3] [256]
      */
-    public static double[][] histogrammeImage(Image image) {
+    public static double[][] histogrammeRGB(Image image) {
         int largeur = image.getXDim();
         int hauteur = image.getYDim();
         int nbDime = image.getBDim();
@@ -106,6 +111,12 @@ public class Projet {
         return histoDecretisation;
     }
 
+    /**
+     * Normaliser un histogramme
+     * @param histo discretisé
+     * @param nbPixel nombre pixel de l'image
+     * @return un histogramme normalisé
+     */
     public static double[][] normalisationHisto(double[][] histo, int nbPixel) {
         for (int i = 0; i < histo.length; i++)
             for (int j = 0; j < histo[i].length; j++)
@@ -114,6 +125,10 @@ public class Projet {
         return histo;
     }
 
+    /**
+     * Affichage d'un histogramme
+     * @param histo quelconque
+     */
     public static void afficheHisto(double[][] histo) {
         if (histo.length == 3) {
             System.out.println("Affichage histogramme couleur");
@@ -157,15 +172,15 @@ public class Projet {
      * @return un double[][] avec un histonormalisé
      */
     private static double[][] normalisationImageToHisto(Image image, String nomImage) {
-        double[][] val = normalisationHisto(discretisationHisto(histogrammeImage(image)), (image.getXDim() * image.getYDim()));
+        double[][] val = normalisationHisto(discretisationHisto(histogrammeRGB(image)), (image.getXDim() * image.getYDim()));
         insertHistoBDD(nomImage, val);
         return  val;
     }
 
-    /**`
-     *
-     * @param name
-     * @param histo
+    /**
+     * Insert l'histogramme d'image dans la base de donnée
+     * @param name nom de l'image
+     * @param histo histogramme de l'image correspondant
      */
     private static void insertHistoBDD(String name, double[][] histo) {
         StringBuilder histoText = new StringBuilder();
