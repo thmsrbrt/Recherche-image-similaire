@@ -1,3 +1,5 @@
+package Model;
+
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -10,13 +12,24 @@ public class BDD {
             "histos TEXT not null" +
             ");";
 
+    /**
+     * Constructeur, crée la connexion à la base de donnée
+     * @throws ClassNotFoundException erreur du driver
+     * @throws SQLException erreur de connexion
+     */
     public BDD() throws ClassNotFoundException, SQLException {
+        String urlBDD = "jdbc:mariadb://localhost:3306/BDD_trobert7";
+        String user = "trobert7";
+        String password = "0503";
         Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/BDD_trobert7", "trobert7", "0503");
+        conn = DriverManager.getConnection(urlBDD, user, password);
         System.err.println("connection OK");
     }
 
 
+    /**
+     * Supprime la table imageMoto
+     */
     public void dropImageMotoTable() {
         try {
             Statement requeteStatique = conn.createStatement();
@@ -27,6 +40,9 @@ public class BDD {
         }
     }
 
+    /**
+     * Crée la table imageMoto
+     */
     public void creatImageMotoTable() {
         Statement requeteStatique = null;
         try {
@@ -38,6 +54,11 @@ public class BDD {
         }
     }
 
+    /**
+     * Insertion des données dans la table imageMoto
+     * @param nom de l'image associée
+     * @param histo histogramme de l'image associée
+     */
     public void insertToImageMoto(String nom, String histo) {
         try {
             String sql = "INSERT INTO ImageMoto(nom, histos) VALUES (?, ?)";
@@ -51,6 +72,13 @@ public class BDD {
         }
     }
 
+    /**
+     * Trouver des resemblances entre histogramme
+     * @param nbImg nombre d'image souhaité en sortie
+     * @param nomImgRef nom de l'image de référence
+     * @return une liste de nbImg images resemblent à l'image nomImgRef
+     * @throws SQLException erreur SQL
+     */
     public ArrayList[][] resemblance(int nbImg, String nomImgRef) throws SQLException {
         ArrayList[][] images = new ArrayList[nbImg][2];
         int i = 0;
@@ -71,6 +99,9 @@ public class BDD {
         return images;
     }
 
+    /**
+     * Ferme la connexion de la base de donnée
+     */
     public void closeConn() {
         try {
             conn.close();
