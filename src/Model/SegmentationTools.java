@@ -1,3 +1,5 @@
+package Model;
+
 import fr.unistra.pelican.Image;
 import fr.unistra.pelican.IntegerImage;
 import fr.unistra.pelican.algorithms.io.ImageLoader;

@@ -1,3 +1,5 @@
+package Model;
+
 import fr.unistra.pelican.ByteImage;
 import fr.unistra.pelican.Image;
 import fr.unistra.pelican.algorithms.io.ImageLoader;
@@ -12,9 +14,14 @@ public class Projet {
     private static TreeMap<Double, String> imageMap = new TreeMap<>();
     private static String racine = "/Users/thomasrobert/Documents_IUT/Semestre4/Image/TD-image/Recherche img similaire/Images/";
     private static BDD base;
+    private boolean methodeTypeHisto; //true = RGB ; false = HSV
+
+    public Projet(){
+
+    }
 
     /**
-     *
+     * Applique un filtre median à une image
      * @param img image d'entrée
      * @return une image d'ébruité avec le filtre médian
      */
@@ -168,7 +175,7 @@ public class Projet {
 
     /**
      *
-     * @param image couleur ou non en entrée
+     * @param image quelconque en entrée
      * @return un double[][] avec un histonormalisé
      */
     private static double[][] normalisationImageToHisto(Image image, String nomImage) {
@@ -266,5 +273,11 @@ public class Projet {
     }
 
  */
+
+
+
+    public static String getRacine() {
+        return racine;
+    }
 
 }
