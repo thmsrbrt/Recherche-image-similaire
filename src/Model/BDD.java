@@ -15,16 +15,19 @@ public class BDD {
 
     /**
      * Constructeur, crée la connexion à la base de donnée
-     * @throws ClassNotFoundException erreur du driver
-     * @throws SQLException erreur de connexion
      */
-    public BDD() throws ClassNotFoundException, SQLException {
+    public BDD() {
         String urlBDD = "jdbc:mariadb://localhost:3306/BDD_trobert7";
         String user = "trobert7";
         String password = "0503";
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection(urlBDD, user, password);
-        System.err.println("connection OK");
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+            conn = DriverManager.getConnection(urlBDD, user, password);
+            System.err.println("connection OK");
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("ERREUR lors de l'initialisation de la BDD");
+        }
     }
 
     /**
@@ -65,10 +68,25 @@ public class BDD {
             prep.setString(1, nom);
             prep.setString(2, histo);
             prep.executeUpdate();
-            System.out.println("insert ok");
+            System.err.println("insert ok");
         } catch (SQLException e) {
             System.err.println("ERREUR lors de insertion : " + e);
         }
+    }
+
+    public String getImageMotoByName(String name) {
+        try {
+            String requete = "SELECT nom, histos FROM ImageMoto WHERE nom = ?";
+            PreparedStatement prep = conn.prepareStatement(requete);
+            prep.setString(1, name);
+            ResultSet resultSet = prep.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("histos");
+            }
+        } catch (SQLException e) {
+            System.err.println("ERREUR lors du select by name : " + e);
+        }
+        return null;
     }
 
     /**
@@ -94,6 +112,24 @@ public class BDD {
                 images[i][2].add(tableResultat.getString("distance"));
                 i++;
             } while (tableResultat.next());
+        }
+        return images;
+    }
+
+    public String[] getAllImage() {
+        String [] images = new String[2];
+        images[0] = "";
+        images[1] = "";
+        try {
+            String requete = "SELECT nom, histos FROM ImageMoto ORDER BY nom";
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(requete);
+            while (resultSet.next()) {
+                images[0] += resultSet.getString("nom") + ";";
+                images[1] += resultSet.getString("histos") + "histo";
+            }
+        } catch (SQLException e) {
+            System.err.println("ERREUR : select all from ImageMoto " + e);
         }
         return images;
     }
