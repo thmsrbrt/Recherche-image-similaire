@@ -12,6 +12,7 @@ public class BDD {
             "histos TEXT not null" +
             ");";
 
+
     /**
      * Constructeur, crée la connexion à la base de donnée
      * @throws ClassNotFoundException erreur du driver
@@ -26,15 +27,14 @@ public class BDD {
         System.err.println("connection OK");
     }
 
-
     /**
      * Supprime la table imageMoto
      */
     public void dropImageMotoTable() {
         try {
             Statement requeteStatique = conn.createStatement();
-            requeteStatique.executeQuery(drop);
-            System.out.println("table imageMoto droped");
+            requeteStatique.executeUpdate(drop);
+            System.err.println("table imageMoto droped");
         } catch (SQLException e) {
             System.err.println("ERREUR table imageMoto deja supprimé : " + e);
         }
@@ -44,10 +44,9 @@ public class BDD {
      * Crée la table imageMoto
      */
     public void creatImageMotoTable() {
-        Statement requeteStatique = null;
         try {
-            requeteStatique = conn.createStatement();
-            requeteStatique.executeQuery(tableImage);
+            Statement requeteStatique = conn.createStatement();
+            requeteStatique.executeUpdate(tableImage);
             System.err.println("création de la table imageMoto réussi");
         } catch (SQLException e) {
             System.err.println("ERREUR création de la table imageMoto : " + e);
@@ -65,8 +64,8 @@ public class BDD {
             PreparedStatement prep = conn.prepareStatement(sql);
             prep.setString(1, nom);
             prep.setString(2, histo);
-            boolean rowsAffected = prep.execute();
-            System.out.println("insert ok" + rowsAffected);
+            prep.executeUpdate();
+            System.out.println("insert ok");
         } catch (SQLException e) {
             System.err.println("ERREUR lors de insertion : " + e);
         }
