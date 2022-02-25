@@ -13,16 +13,12 @@ public class Vue extends JFrame {
     ControlMenu controlMenu;
     private final int size = 1000;
 
-    private JMenuItem jMenuExit;
-
     private JPanel jPanelOutputImage;
     private JPanel jPanelImageRef;
     private JPanel jPanelOption;
     private JPanel jPanelLog;
     private JPanel jPanelInput;
 
-    private JFrame jFrameOuputImage;
-    private ImageIcon imageIconRef;
     private JTextArea jTextAreaLog;
 
 
@@ -147,9 +143,6 @@ public class Vue extends JFrame {
 
         JScrollPane scrollLog = new JScrollPane();
         scrollLog.setPreferredSize(new Dimension(this.size,this.size/2));
-
-        ImageIcon imageIcon = null;
-        jFrameOuputImage = new JFrame();
 
         for (int i = 0; i < 12; i++) {
             //Image image = Toolkit.getDefaultToolkit().getImage(""); //modele.getRacine() + model.getNom(i)
