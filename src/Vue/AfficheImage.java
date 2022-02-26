@@ -7,11 +7,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 /**
  * Composant qui affiche une image
  */
-public class AfficheImage extends Panel {
+public class AfficheImage extends JPanel {
     private BufferedImage image;
 
     public AfficheImage(String nomFichier) {

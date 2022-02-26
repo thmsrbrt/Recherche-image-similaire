@@ -243,6 +243,8 @@ public class ResearchPicture {
     }
 
     public String[] getNbImageMap(int nbElement) {
+        if (imageMap.isEmpty())
+            return new String[0];
         if (nbElement > imageMap.size()) {
             System.err.println("Le nombre d'image similaire demandé est supérieur à la base");
             nbElement = imageMap.size();

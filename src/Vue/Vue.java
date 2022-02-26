@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Vue extends JFrame {
-    private ResearchPicture model;
+    private final ResearchPicture model;
     private ControllerNbImageOut controllerNbImageOut;
     private ControllerTypeHisto controllerTypeHisto;
     private ControllerSearch controllerSearch;
@@ -166,30 +166,37 @@ public class Vue extends JFrame {
         jPanelImageRef = new JPanel();
         jPanelImageRef.setSize(this.size/2, this.size/2);
         jPanelImageRef.setLayout(new BoxLayout(jPanelImageRef, BoxLayout.Y_AXIS));
-        String nom = "/Users/thomasrobert/Documents_IUT/Semestre4/Image/TD-image/Recherche_img_similaire/Images/img/eiffel.jpg";
-        AfficheImage image = new AfficheImage(nom);
+        //TODO : modifier la taille de limage
+        AfficheImage image = new AfficheImage(model.getRacine() + "img/eiffel.jpg");
         Dimension dimension = new Dimension(this.size/2, this.size/2);
         image.setPreferredSize(dimension);
+        //TODO : centrer ce TITRE!!
         String label = "Nom de l'image : ";
-        JLabel jLabelNomImageRef = new JLabel(label + "nom");
+        JLabel jLabelNomImageRef = new JLabel(label + "img/eiffel.jpg");
         jPanelImageRef.add(jLabelNomImageRef);
         jPanelImageRef.add(image);
     }
 
-    private void makeJpanelResult() {
+    public void makeJpanelResult() {
         jPanelOutputImage = new JPanel();
         jPanelOutputImage.setSize(this.size, this.size/2);
         jPanelOutputImage.setLayout(new BoxLayout(jPanelOutputImage, BoxLayout.X_AXIS));
 
-        JScrollPane scrollLog = new JScrollPane();
-        scrollLog.setPreferredSize(new Dimension(this.size,this.size/2));
+        //TODO : afficher le résultat , mettre les images dans un srcoll bordel
 
-        for (int i = 0; i < 12; i++) {
-            //Image image = Toolkit.getDefaultToolkit().getImage(""); //modele.getRacine() + model.getNom(i)
-            //imageIcon.setImage(image);
+        String[] imgs = model.getNbImageMap(model.getNbImageOut());
+        System.out.println(imgs.length);
+        JPanel a = new JPanel();
+        if (imgs.length > 0) {
+            for (int i = 0; i < model.getNbImageOut(); i++) {
+                a= (new AfficheImage(model.getRacine() + "motos/" + imgs[i].replace(" ", "")));
+            }
         }
 
-        jPanelOutputImage.add(scrollLog);
+        JScrollPane scrollImage = new JScrollPane(a);
+        scrollImage.setPreferredSize(new Dimension(this.size,this.size/2));
+
+        jPanelOutputImage.add(scrollImage);
     }
 
 

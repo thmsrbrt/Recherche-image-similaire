@@ -29,6 +29,6 @@ public class ControllerSearch implements ActionListener {
             model.getNbImageMap(model.getNbImageOut());
         }
         System.out.println(Arrays.toString(model.getNbImageMap(model.getNbImageOut())));
-
+        vue.makeJpanelResult();
     }
 }
