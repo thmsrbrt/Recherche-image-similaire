@@ -1,16 +1,19 @@
 package Vue;
 
-import Controller.ControlMenu;
-import Model.Projet;
+import Controller.ControllerNbImageOut;
+import Controller.ControllerSearch;
+import Controller.ControllerTypeHisto;
+import Model.ResearchPicture;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Vue extends JFrame {
-    //Model
-    private Projet projet;
-    //Controleur
-    ControlMenu controlMenu;
+    private ResearchPicture model;
+    private ControllerNbImageOut controllerNbImageOut;
+    private ControllerTypeHisto controllerTypeHisto;
+    private ControllerSearch controllerSearch;
+
     private final int size = 1000;
 
     private JPanel jPanelOutputImage;
@@ -20,17 +23,55 @@ public class Vue extends JFrame {
     private JPanel jPanelInput;
 
     private JTextArea jTextAreaLog;
+    private JTextField jTextFieldNameImage;
+    private JTextField jTextFieldNumberImage;
+
+    private JButton jButtonValideNbImageOut;
+    private JButton jButtonValideRecherche;
+
+    private JRadioButton jRadioButtonRGB;
+    private JRadioButton jRadioButtonHSV;
+
+    private JLabel jLabelNomRadio;
+    private JLabel jLabelNbImageOut;
+    private JLabel jLabelNomImage;
 
 
-    public Vue() {
+    public Vue(ResearchPicture model) {
+        this.model = model;
         this.setResizable(true);
         this.setTitle("Recherche d'image similaire");
-        this.affichage();
+        this.initAttribut();
 
+        this.affichage();
         this.setVisible(true);
-        this.setSize(1000, 1000);
+        this.setSize(this.size, this.size);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
+    }
+
+    public void initAttribut() {
+        controllerSearch = new ControllerSearch(model, this);
+        controllerNbImageOut = new ControllerNbImageOut(model, this);
+        controllerTypeHisto = new ControllerTypeHisto(model, this);
+
+
+        jButtonValideRecherche = new JButton("Valider");
+        jButtonValideNbImageOut = new JButton("Valider");
+
+        jLabelNomImage = new JLabel("Nom image : ");
+        jLabelNomRadio = new JLabel("Type de histogramme : ");
+        jLabelNbImageOut = new JLabel("Nombre d'image similaire souhaité : ");
+
+        jTextFieldNameImage = new JTextField("002.jpg");
+        jTextFieldNumberImage = new JTextField("10");
+
+
+        jRadioButtonRGB = new JRadioButton("RGB", true);
+        jRadioButtonHSV = new JRadioButton("HSV");
+
+
+
     }
 
     public void affichage() {
@@ -77,33 +118,32 @@ public class Vue extends JFrame {
         jPanelInput.setLayout(new BoxLayout(jPanelInput, BoxLayout.Y_AXIS));
 
         JPanel jPanelName = new JPanel();
-        JLabel jLabelNomImage = new JLabel("Nom image : ");
-        JTextField jTextFieldNameImage = new JTextField("test.jpg");
         jTextFieldNameImage.setPreferredSize(new Dimension(350, 30));
-        JButton jButtonValideRecherche = new JButton("Valider");
+        jButtonValideRecherche.addActionListener(controllerSearch);
+
         jPanelName.add(jLabelNomImage);
         jPanelName.add(jTextFieldNameImage);
         jPanelName.add(jButtonValideRecherche);
 
         JPanel jPanelType = new JPanel();
-        ButtonGroup groupeRadioButton = new ButtonGroup();
-
-        JLabel jLabelNomRadio = new JLabel("Type de histogramme : ");
         jPanelType.add(jLabelNomRadio);
 
-        JRadioButton jRadioButtonRGB = new JRadioButton("RGB", true);
+        ButtonGroup groupeRadioButton = new ButtonGroup();
+
         groupeRadioButton.add(jRadioButtonRGB);
         jPanelType.add(jRadioButtonRGB);
+        jRadioButtonRGB.addActionListener(controllerTypeHisto);
 
-        JRadioButton jRadioButtonHSV = new JRadioButton("HSV");
         groupeRadioButton.add(jRadioButtonHSV);
         jPanelType.add(jRadioButtonHSV);
+        jRadioButtonHSV.addActionListener(controllerTypeHisto);
 
         JPanel jPanelNumber = new JPanel();
-        JLabel jLabelNbImageOut = new JLabel("Nombre d'image similaire souhaité : ");
-        JTextField jTextFieldNumberImage = new JTextField("10");
+        jButtonValideNbImageOut.addActionListener(controllerNbImageOut);
+
         jPanelNumber.add(jLabelNbImageOut);
         jPanelNumber.add(jTextFieldNumberImage);
+        jPanelNumber.add(jButtonValideNbImageOut);
 
         jPanelInput.add(jPanelName);
         jPanelInput.add(jPanelType);
@@ -153,5 +193,28 @@ public class Vue extends JFrame {
     }
 
 
+    public JTextField getjTextFieldNumberImage() {
+        return jTextFieldNumberImage;
+    }
+
+    public JButton getjButtonValideNbImageOut() {
+        return jButtonValideNbImageOut;
+    }
+
+    public JRadioButton getjRadioButtonRGB() {
+        return jRadioButtonRGB;
+    }
+
+    public JRadioButton getjRadioButtonHSV() {
+        return jRadioButtonHSV;
+    }
+
+    public JTextField getjTextFieldNameImage() {
+        return jTextFieldNameImage;
+    }
+
+    public JButton getjButtonValideRecherche() {
+        return jButtonValideRecherche;
+    }
 
 }
