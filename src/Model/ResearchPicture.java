@@ -9,20 +9,34 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class Projet {
+
+public class ResearchPicture {
     private TreeMap<Double, String> imageMap;
     private final String racine;
     private final BDD base;
+    private int nbImageOut;
     private boolean methodeTypeHisto; //true = RGB ; false = HSV
 
     /**
-     * Constructeur Projet
+     * Constructeur ResearchPicture default
      */
-    public Projet() {
+    public ResearchPicture() {
         this.racine = "/Users/thomasrobert/Documents_IUT/Semestre4/Image/TD-image/Recherche_img_similaire/Images/";
         this.base = new BDD();
         this.imageMap = new TreeMap<>();
         this.methodeTypeHisto = true;
+        this.nbImageOut = 10;
+    }
+
+    /**
+     * Constructeur ResearchPicture by methode
+     */
+    public ResearchPicture(boolean methodeTypeHisto) {
+        this.racine = "/Users/thomasrobert/Documents_IUT/Semestre4/Image/TD-image/Recherche_img_similaire/Images/";
+        this.base = new BDD();
+        this.imageMap = new TreeMap<>();
+        this.methodeTypeHisto = methodeTypeHisto;
+        this.nbImageOut = 10;
     }
 
     /**
@@ -192,18 +206,21 @@ public class Projet {
      */
     private double[][] histoStringToDouble(String histoString){
         double[][] histoDouble;
-        String[] histos = histoString.split("\n");
-        int nbHisto = histos.length;
-        int nbBarre = histos[0].split(";").length;
-        histoDouble = new double[nbHisto][nbBarre];
-        for (int i = 0; i < nbHisto; i++) {
-            String[] histo = histos[i].split(";");
-            for (int j = 0; j < nbBarre; j++) {
-                //System.out.println(histo[j]);
-                histoDouble[i][j] = Double.parseDouble(histo[j]);
+        if (histoString !=  null){
+            String[] histos = histoString.split("\n");
+            int nbHisto = histos.length;
+            int nbBarre = histos[0].split(";").length;
+            histoDouble = new double[nbHisto][nbBarre];
+            for (int i = 0; i < nbHisto; i++) {
+                String[] histo = histos[i].split(";");
+                for (int j = 0; j < nbBarre; j++) {
+                    //System.out.println(histo[j]);
+                    histoDouble[i][j] = Double.parseDouble(histo[j]);
+                }
             }
+            return histoDouble;
         }
-        return histoDouble;
+        return null;
     }
 
     /**
@@ -266,5 +283,15 @@ public class Projet {
         return this.racine;
     }
 
-}
+    public void setMethodeTypeHisto(boolean methodeTypeHisto) {
+        this.methodeTypeHisto = methodeTypeHisto;
+    }
 
+    public int getNbImageOut() {
+        return nbImageOut;
+    }
+
+    public void setNbImageOut(int nbImageOut) {
+        this.nbImageOut = nbImageOut;
+    }
+}
