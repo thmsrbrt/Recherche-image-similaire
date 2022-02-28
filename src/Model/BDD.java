@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class BDD {
     private Connection conn;
-    private final String drop = "DROP TABLE ImageMoto;";
-    private String tableImage = "CREATE TABLE ImageMoto (" +
+    private final String drop = "DROP TABLE Image;";
+    private String tableImage = "CREATE TABLE Image (" +
             "id INT primary key AUTO_INCREMENT," +
             "nom VARCHAR(255) not null, " +
             "histos TEXT not null" +
@@ -31,39 +31,39 @@ public class BDD {
     }
 
     /**
-     * Supprime la table imageMoto
+     * Supprime la table Image
      */
-    public void dropImageMotoTable() {
+    public void dropImageTable() {
         try {
             Statement requeteStatique = conn.createStatement();
             requeteStatique.executeUpdate(drop);
-            System.err.println("table imageMoto droped");
+            System.err.println("table Image droped");
         } catch (SQLException e) {
-            System.err.println("ERREUR table imageMoto deja supprimé : " + e);
+            System.err.println("ERREUR table Image deja supprimé : " + e);
         }
     }
 
     /**
-     * Crée la table imageMoto
+     * Crée la table Image
      */
-    public void creatImageMotoTable() {
+    public void creatImageTable() {
         try {
             Statement requeteStatique = conn.createStatement();
             requeteStatique.executeUpdate(tableImage);
-            System.err.println("création de la table imageMoto réussi");
+            System.err.println("création de la table Image réussi");
         } catch (SQLException e) {
-            System.err.println("ERREUR création de la table imageMoto : " + e);
+            System.err.println("ERREUR création de la table Image : " + e);
         }
     }
 
     /**
-     * Insertion des données dans la table imageMoto
+     * Insertion des données dans la table Image
      * @param nom de l'image associée
      * @param histo histogramme de l'image associée
      */
-    public void insertToImageMoto(String nom, String histo) {
+    public void insertToImage(String nom, String histo) {
         try {
-            String sql = "INSERT INTO ImageMoto(nom, histos) VALUES (?, ?)";
+            String sql = "INSERT INTO Image(nom, histos) VALUES (?, ?)";
             PreparedStatement prep = conn.prepareStatement(sql);
             prep.setString(1, nom);
             prep.setString(2, histo);
@@ -74,9 +74,9 @@ public class BDD {
         }
     }
 
-    public String getImageMotoByName(String name) {
+    public String getImageByName(String name) {
         try {
-            String requete = "SELECT nom, histos FROM ImageMoto WHERE nom = ?";
+            String requete = "SELECT nom, histos FROM Image WHERE nom = ?";
             PreparedStatement prep = conn.prepareStatement(requete);
             prep.setString(1, name);
             ResultSet resultSet = prep.executeQuery();
@@ -99,7 +99,7 @@ public class BDD {
     public ArrayList[][] resemblance(int nbImg, String nomImgRef) throws SQLException {
         ArrayList[][] images = new ArrayList[nbImg][2];
         int i = 0;
-        String req = "SELECT distance, nom FROM ImageMoto ORDER BY distance DESC LIMIT ?";
+        String req = "SELECT distance, nom FROM Image ORDER BY distance DESC LIMIT ?";
         PreparedStatement prep = conn.prepareStatement(req);
         prep.setInt(1, nbImg);
         ResultSet tableResultat = prep.executeQuery(req);
@@ -121,7 +121,7 @@ public class BDD {
         images[0] = "";
         images[1] = "";
         try {
-            String requete = "SELECT nom, histos FROM ImageMoto ORDER BY nom";
+            String requete = "SELECT nom, histos FROM Image ORDER BY nom";
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(requete);
             while (resultSet.next()) {
@@ -129,7 +129,7 @@ public class BDD {
                 images[1] += resultSet.getString("histos") + "histo";
             }
         } catch (SQLException e) {
-            System.err.println("ERREUR : select all from ImageMoto " + e);
+            System.err.println("ERREUR : select all from Image " + e);
         }
         return images;
     }
