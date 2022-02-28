@@ -108,11 +108,12 @@ public class ResearchPicture {
     }
 
     /**
-     * TODO : faire diviser par 2 au lieux de 10
+     *
      * @param histo de taille [3][256]
-     * @return histograme de taille [255][3]
+     * @return histogramme de taille [32][3]
      */
     private double[][] discretisationHisto(double[][] histo) {
+        /*
         int tailleHisto = histo[0].length;
         int nbCanneaux = histo.length;
         double[][] histoDecretisation = new double[nbCanneaux][tailleHisto/10];
@@ -134,6 +135,36 @@ public class ResearchPicture {
         }
         //afficheHisto(histoDecretisation);
 
+        return histoDecretisation;
+         */
+        return discretisationHistoDiv2(discretisationHistoDiv2(discretisationHistoDiv2(histo)));
+    }
+
+    /**
+     *
+     * @param histo de taille [3][X]
+     * @return histo de taille [3][X/2]
+     */
+    private double[][] discretisationHistoDiv2(double[][] histo) {
+        int tailleHisto = histo[0].length;
+        int nbCanneaux = histo.length;
+        double[][] histoDecretisation = new double[nbCanneaux][tailleHisto/2];
+
+        for (int i = 0; i < nbCanneaux; i++)
+            for (int j = 0; j < tailleHisto/2; j++)
+                histoDecretisation[i][j] = 0;
+
+        int j = 0;
+        for (int k = 0; k < nbCanneaux; k++) {
+            for (int i = 0; i < tailleHisto-1; i++) {
+                histoDecretisation[k][j] += histo[k][i];
+                i++;
+                histoDecretisation[k][j] += histo[k][i];
+                j++;
+            }
+            j = 0;
+        }
+        //afficheHisto(histoDecretisation);
         return histoDecretisation;
     }
 
@@ -164,7 +195,7 @@ public class ResearchPicture {
             }
             histoText.append("\n");
         }
-        base.insertToImageMoto(name, histoText.toString());
+        base.insertToImage(name, histoText.toString());
     }
 
     /**
@@ -189,7 +220,7 @@ public class ResearchPicture {
      * Remplis la map avec les distances entre l'image de référence et les autres images.
      */
     public void similarite(String nomRef) {
-        final double[][] histoRef = histoStringToDouble(base.getImageMotoByName(nomRef));
+        final double[][] histoRef = histoStringToDouble(base.getImageByName(nomRef));
         String[] allHistosImage = base.getAllImage();
         String[] allHistosImageName = allHistosImage[0].split(";");
         String[] allHistosImageVal = allHistosImage[1].split("histo");
@@ -227,7 +258,7 @@ public class ResearchPicture {
      *
      * @param histoR reference
      * @param histoI à comparer
-     * @return distance entre les deux histos
+     * @return distance entre les deux histogrammes
      */
     private double distanceEntre2Histo (double[][] histoR, double[][] histoI) {
         int nbCanal = histoI.length;
