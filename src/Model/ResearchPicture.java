@@ -7,6 +7,7 @@ import fr.unistra.pelican.algorithms.io.ImageLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 
 
@@ -16,6 +17,7 @@ public class ResearchPicture {
     private final BDD base;
     private int nbImageOut;
     private boolean methodeTypeHisto; //true = RGB ; false = HSV
+    private String outPut;
 
     /**
      * Constructeur ResearchPicture default
@@ -26,6 +28,7 @@ public class ResearchPicture {
         this.imageMap = new TreeMap<>();
         this.methodeTypeHisto = true;
         this.nbImageOut = 10;
+        outPut = "";
     }
 
     /**
@@ -37,6 +40,7 @@ public class ResearchPicture {
         this.imageMap = new TreeMap<>();
         this.methodeTypeHisto = methodeTypeHisto;
         this.nbImageOut = 10;
+        outPut = "";
     }
 
     /**
@@ -75,6 +79,7 @@ public class ResearchPicture {
                 }
             }
         }
+        outPut += Instant.now() + ": filtre Median Appliqué \n";
         return resultat;
     }
 
@@ -103,15 +108,29 @@ public class ResearchPicture {
                 }
             }
         }
+        outPut += Instant.now() + ": histogramme RGB créé \n";
         //afficheHisto(histo);
         return histo;
     }
 
     /**
-     *
-     * @param histo de taille [3][256]
-     * @return histogramme de taille [32][3]
+     * TODO : methode
+     * @param image
+     * @return
      */
+    private double[][] histogrammeHSV(Image image) {
+
+        outPut += Instant.now() + ": histogramme HSV créé \n";
+        System.out.println("here");
+        return histogrammeRGB(image);
+    }
+
+
+        /**
+         *
+         * @param histo de taille [3][256]
+         * @return histogramme de taille [32][3]
+         */
     private double[][] discretisationHisto(double[][] histo) {
         /*
         int tailleHisto = histo[0].length;
@@ -137,6 +156,8 @@ public class ResearchPicture {
 
         return histoDecretisation;
          */
+        outPut += Instant.now() + ": discrétisation effectué \n";
+
         return discretisationHistoDiv2(discretisationHistoDiv2(discretisationHistoDiv2(histo)));
     }
 
@@ -178,24 +199,34 @@ public class ResearchPicture {
         for (int i = 0; i < histo.length; i++)
             for (int j = 0; j < histo[i].length; j++)
                 histo[i][j] = histo[i][j] / nbPixel * 100;
+        outPut += Instant.now() + ": Normalisation histogramme \n";
+
         return histo;
     }
 
     /**
      * Insert l'histogramme d'image dans la base de donnée
      * @param name nom de l'image
-     * @param histo histogramme de l'image correspondant
+     * @param histoRGB histogramme de l'image correspondant
      */
-    private void insertHistoBDD(String name, double[][] histo) {
-        StringBuilder histoText = new StringBuilder();
+    private void insertHistoBDD(String name, double[][] histoRGB, double[][] histoHSV) {
+        StringBuilder histoTextRGB = new StringBuilder();
+        StringBuilder histoTextHSV = new StringBuilder();
 
-        for (double[] doubles : histo) {
+        for (double[] doubles : histoRGB) {
             for (double aDouble : doubles) {
-                histoText.append(aDouble).append(";");
+                histoTextRGB.append(aDouble).append(";");
             }
-            histoText.append("\n");
+            histoTextRGB.append("\n");
         }
-        base.insertToImage(name, histoText.toString());
+        for (double[] doubles : histoHSV) {
+            for (double aDouble : doubles) {
+                histoTextHSV.append(aDouble).append(";");
+            }
+            histoTextHSV.append("\n");
+        }
+        outPut += Instant.now() + ": image sauvegardé dans la base de donnée \n";
+        base.insertToImage(name, histoTextRGB.toString(), histoTextHSV.toString());
     }
 
     /**
@@ -211,23 +242,31 @@ public class ResearchPicture {
             nomImage = Objects.requireNonNull(item.getName());
             if (!nomImage.contains(".jpg") ) {continue;}
             Image image = ImageLoader.exec(racine + dir + nomImage);
-            double[][] val = normalisationHisto(discretisationHisto(histogrammeRGB(filtreMedian(image))), (image.getXDim() * image.getYDim()));
-            insertHistoBDD(nomImage, val);
+            double[][] valRGB = normalisationHisto(discretisationHisto(histogrammeRGB(filtreMedian(image))), (image.getXDim() * image.getYDim()));
+            double[][] valHSV = normalisationHisto(discretisationHisto(histogrammeHSV(filtreMedian(image))), (image.getXDim() * image.getYDim()));
+
+            insertHistoBDD(nomImage, valRGB, valHSV);
         }
+        outPut += Instant.now() + ": Traitement d'initialisation terminé \n";
     }
 
     /**
      * Remplis la map avec les distances entre l'image de référence et les autres images.
      */
     public void similarite(String nomRef) {
-        final double[][] histoRef = histoStringToDouble(base.getImageByName(nomRef));
-        String[] allHistosImage = base.getAllImage();
+        final double[][] histoRef = histoStringToDouble(base.getImageByName(nomRef, methodeTypeHisto));
+        if (histoRef == null) {
+            outPut += Instant.now() + ": IMAGE INTROUVABLE !\n";
+            return;
+        }
+        String[] allHistosImage = base.getAllImage(methodeTypeHisto);
         String[] allHistosImageName = allHistosImage[0].split(";");
         String[] allHistosImageVal = allHistosImage[1].split("histo");
 
         for (int i = 0; i < allHistosImage[0].split(";").length; i++) {
             imageMap.put(distanceEntre2Histo(histoRef, histoStringToDouble(allHistosImageVal[i])), allHistosImageName[i]);
         }
+        outPut += Instant.now() + ": similarité entre les images sauvegardé \n";
     }
 
     /**
@@ -284,6 +323,8 @@ public class ResearchPicture {
         String[] imagesName = new String[nbElement];
         System.arraycopy(listNomImage, 1, imagesName, 0, nbElement);
 
+        outPut += Instant.now() + ": Image similaire affiché : " + nbElement + " \n";
+        outPut += Arrays.toString(imagesName) + "\n";
         return imagesName;
     }
 
@@ -326,5 +367,17 @@ public class ResearchPicture {
 
     public void setNbImageOut(int nbImageOut) {
         this.nbImageOut = nbImageOut;
+    }
+
+    public String getOutPut() {
+        return outPut;
+    }
+
+    public void setOutPut(String outPut) {
+        this.outPut =  outPut;
+    }
+
+    public void clearImageMap() {
+        this.imageMap = new TreeMap<>();
     }
 }
