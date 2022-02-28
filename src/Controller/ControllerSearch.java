@@ -5,7 +5,7 @@ import Vue.Vue;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
+import java.time.Instant;
 
 public class ControllerSearch implements ActionListener {
     private ResearchPicture model;
@@ -23,12 +23,15 @@ public class ControllerSearch implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println("recherche");
+        model.setOutPut(model.getOutPut() + Instant.now() + ": Recherche en cours \n");
         if (e.getSource() == vue.getjButtonValideRecherche()) {
+            model.clearImageMap();
             model.similarite(vue.getjTextFieldNameImage().getText());
-            model.getNbImageMap(model.getNbImageOut());
+            vue.makeJpanelResult();
+            vue.makeJPanelImageRef();
         }
-        System.out.println(Arrays.toString(model.getNbImageMap(model.getNbImageOut())));
-        vue.makeJpanelResult();
+        vue.setjLabelNomImageRef("Nom de l'image : ");
+        vue.setjTextAreaLog(model.getOutPut());
     }
 }
+
