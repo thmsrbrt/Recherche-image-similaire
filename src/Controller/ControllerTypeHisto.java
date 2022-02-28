@@ -6,7 +6,6 @@ import Vue.Vue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.Instant;
-import java.util.Arrays;
 
 public class ControllerTypeHisto implements ActionListener {
     private ResearchPicture model;
@@ -22,7 +21,6 @@ public class ControllerTypeHisto implements ActionListener {
         this.vue = vue;
     }
 
-
     @Override
     public void actionPerformed(ActionEvent e) {
         model.setOutPut(model.getOutPut() + Instant.now() + ": Changement de méthode de recherche \n");
@@ -35,8 +33,8 @@ public class ControllerTypeHisto implements ActionListener {
             model.clearImageMap();
             model.setMethodeTypeHisto(false);
             model.similarite(vue.getjTextFieldNameImage().getText());
-            vue.makeJpanelResult();
         }
+        vue.setAfficheImageTab(model.getNbImageMap(model.getNbImageOut()));
         vue.setjTextAreaLog(model.getOutPut());
     }
 }

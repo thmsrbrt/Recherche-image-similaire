@@ -7,6 +7,7 @@ import Model.ResearchPicture;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 public class Vue extends JFrame {
     private final ResearchPicture model;
@@ -15,6 +16,7 @@ public class Vue extends JFrame {
     private ControllerSearch controllerSearch;
 
     private final int size = 1000;
+    private final String dossier;
 
     private JPanel jPanelOutputImage;
     private JPanel jPanelImageRef;
@@ -37,14 +39,16 @@ public class Vue extends JFrame {
     private JLabel jLabelNomImage;
     private JLabel jLabelNomImageRef;
 
+    private AfficheImage afficheImageRef;
+    private AfficheImageTab afficheImageTab;
 
     public Vue(ResearchPicture model) {
         this.model = model;
-        //this.model.init("motos/");
+        this.dossier = "motos" + "/";
+        //this.model.init(this.dossier); // décommenter une fois la base de donnée enregistrée
         this.setResizable(true);
         this.setTitle("Recherche d'image similaire");
         this.initAttribut();
-
         this.affichage();
         this.setVisible(true);
         this.setSize(this.size, this.size);
@@ -57,7 +61,6 @@ public class Vue extends JFrame {
         controllerNbImageOut = new ControllerNbImageOut(model, this);
         controllerTypeHisto = new ControllerTypeHisto(model, this);
 
-
         jButtonValideRecherche = new JButton("Valider");
         jButtonValideNbImageOut = new JButton("Valider");
 
@@ -66,12 +69,14 @@ public class Vue extends JFrame {
         jLabelNbImageOut = new JLabel("Nombre d'image similaire souhaité : ");
         jLabelNomImageRef = new JLabel("Nom de l'image : ");
 
-        jTextFieldNameImage = new JTextField("002.jpg");
+        jTextFieldNameImage = new JTextField("100.jpg");
         jTextFieldNumberImage = new JTextField("10");
 
 
         jRadioButtonRGB = new JRadioButton("RGB", true);
         jRadioButtonHSV = new JRadioButton("HSV");
+
+        afficheImageRef = new AfficheImage(model.getRacine() + dossier + getjTextFieldNameImage().getText().replace(" ", ""));
     }
 
     public void affichage() {
@@ -156,10 +161,8 @@ public class Vue extends JFrame {
     private void makeJPanelLog() {
         jPanelLog = new JPanel();
         jTextAreaLog = new JTextArea();
-
         JScrollPane scrollLog = new JScrollPane(jTextAreaLog);
         scrollLog.setPreferredSize(new Dimension(this.size/2,this.size/4));
-
         jPanelLog.add(scrollLog);
     }
 
@@ -167,39 +170,25 @@ public class Vue extends JFrame {
         jPanelImageRef = new JPanel();
         jPanelImageRef.setSize(this.size/2, this.size/2);
         jPanelImageRef.setLayout(new BoxLayout(jPanelImageRef, BoxLayout.Y_AXIS));
-        //TODO : modifier la taille de limage
-        AfficheImage image = new AfficheImage(model.getRacine() + "motos/" + getjTextFieldNameImage().getText().replace(" ", ""));
-        Dimension dimension = new Dimension(this.size/2, this.size/2);
-        image.setPreferredSize(dimension);
-        //TODO : centrer ce TITRE!!
         String label = "Nom de l'image : ";
         jLabelNomImageRef.setText(label + getjTextFieldNameImage().getText());
+        jLabelNomImageRef.setHorizontalAlignment(JLabel.CENTER);
         jPanelImageRef.add(jLabelNomImageRef);
-        jPanelImageRef.add(image);
+        jPanelImageRef.add(afficheImageRef);
     }
 
     public void makeJpanelResult() {
         jPanelOutputImage = new JPanel();
         jPanelOutputImage.setSize(this.size, this.size/2);
         jPanelOutputImage.setLayout(new BoxLayout(jPanelOutputImage, BoxLayout.X_AXIS));
-
-        //TODO : afficher le résultat , mettre les images dans un srcoll bordel
-
         String[] imgs = model.getNbImageMap(model.getNbImageOut());
-        //System.out.println(imgs.length);
-        JPanel a = new JPanel();
-        if (imgs.length > 0) {
-            for (int i = 0; i < model.getNbImageOut(); i++) {
-                a= (new AfficheImage(model.getRacine() + "motos/" + imgs[i].replace(" ", "")));
-            }
+        if (model.getNbImageOut() > 0) {
+            afficheImageTab = new AfficheImageTab(model.getNbImageOut(),(model.getRacine() + dossier), imgs );
         }
-
-        JScrollPane scrollImage = new JScrollPane(a);
+        JScrollPane scrollImage = new JScrollPane(afficheImageTab, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollImage.setPreferredSize(new Dimension(this.size,this.size/2));
-
         jPanelOutputImage.add(scrollImage);
     }
-
 
     public JTextField getjTextFieldNumberImage() {
         return jTextFieldNumberImage;
@@ -225,30 +214,23 @@ public class Vue extends JFrame {
         return jButtonValideRecherche;
     }
 
-    public JTextArea getjTextAreaLog() {
-        return jTextAreaLog;
-    }
-
     public void setjTextAreaLog(String jTextAreaLog) {
         this.jTextAreaLog.setText(jTextAreaLog);
     }
 
     public void setjLabelNomImageRef(String e) {
-        this.jLabelNomImageRef.setText(e +  this.getjTextFieldNameImage().getText());
+        this.jLabelNomImageRef.setText(e + this.getjTextFieldNameImage().getText());
     }
 
-    public void setjPanelImageRef() {
-        //TODO : modifier la taille de limage
-        JPanel test = new JPanel();
-        AfficheImage image = new AfficheImage(model.getRacine() + "motos/" + getjTextFieldNameImage().getText().replace(" ", ""));
-        Dimension dimension = new Dimension(this.size/2, this.size/2);
-        image.setPreferredSize(dimension);
-        //TODO : centrer ce TITRE!!
-        String label = "Nom de l'image : ";
-        System.out.println("test" + getjTextFieldNameImage().getText());
-        jLabelNomImageRef.setText(label + getjTextFieldNameImage().getText());
-        test.add(jLabelNomImageRef);
-        test.add(image);
-        this.jPanelImageRef = test;
+    public void setImage(String s) {
+        this.afficheImageRef.changerImage(model.getRacine() + s + this.getjTextFieldNameImage().getText());
+    }
+
+    public void setAfficheImageTab(String[] imageTab) {
+        System.out.println(Arrays.toString(imageTab));
+        System.out.println(model.getNbImageOut());
+        this.afficheImageTab.removeAll();
+        if (model.getNbImageOut() > 0)
+            this.afficheImageTab.changerImageTab(model.getNbImageOut(),(model.getRacine() + dossier), imageTab);
     }
 }

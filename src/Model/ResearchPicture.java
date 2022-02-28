@@ -28,19 +28,7 @@ public class ResearchPicture {
         this.imageMap = new TreeMap<>();
         this.methodeTypeHisto = true;
         this.nbImageOut = 10;
-        outPut = "";
-    }
-
-    /**
-     * Constructeur ResearchPicture by methode
-     */
-    public ResearchPicture(boolean methodeTypeHisto) {
-        this.racine = "/Users/thomasrobert/Documents_IUT/Semestre4/Image/TD-image/Recherche_img_similaire/Images/";
-        this.base = new BDD();
-        this.imageMap = new TreeMap<>();
-        this.methodeTypeHisto = methodeTypeHisto;
-        this.nbImageOut = 10;
-        outPut = "";
+        this.outPut = "";
     }
 
     /**
@@ -120,17 +108,18 @@ public class ResearchPicture {
      */
     private double[][] histogrammeHSV(Image image) {
         double[][] histo = histogrammeRGB(image);
+
         for (int i = 0; i < histo.length; i++) {
             double M = Math.max(histo[0][i],Math.max(histo[1][i],histo[2][i]));
             double m = Math.min(histo[0][i],Math.min(histo[1][i],histo[2][i]));
             double V = M/255;
             double S = 0;
             double H = 0;
+
             if (M > 0)
                 S = 1 - m/M;
             else if (M == 0)
                 S = 0;
-
             if (histo[1][i] >= histo[2][i])
                 H =  Math.cos((histo[0][i]- 1/2 * histo[1][i] - 1/2 * histo[2][i]) / Math.sqrt(Math.pow(histo[0][i],2)+ Math.pow(histo[1][i], 2) + Math.pow(histo[2][i], 2) - histo[0][i] * histo[1][i] - histo[0][i] * histo[2][i] - histo[1][i] * histo[2][i]));
             else if (histo[1][i] > histo[2][i])
@@ -142,6 +131,7 @@ public class ResearchPicture {
         }
         outPut += Instant.now() + ": histogramme HSV créé \n";
         return histo;
+
     }
 
         /**
@@ -227,18 +217,21 @@ public class ResearchPicture {
      * @param dir Le dossier avec les images
      */
     public void init(String dir) {
+        base.dropImageTable();
+        base.creatImageTable();
         String nomImage = "";
         final File[] files = new File(racine + dir).listFiles();
         assert files != null;
 
         for(File item : files) {
             nomImage = Objects.requireNonNull(item.getName());
-            if (!nomImage.contains(".jpg") ) {continue;}
-            Image image = ImageLoader.exec(racine + dir + nomImage);
-            double[][] valRGB = normalisationHisto(discretisationHisto(histogrammeRGB(filtreMedian(image))), (image.getXDim() * image.getYDim()));
-            double[][] valHSV = normalisationHisto(discretisationHisto(histogrammeHSV(filtreMedian(image))), (image.getXDim() * image.getYDim()));
+            if (nomImage.contains(".jpg") || nomImage.contains(".png")) {
+                Image image = ImageLoader.exec(racine + dir + nomImage);
+                double[][] valRGB = normalisationHisto(discretisationHisto(histogrammeRGB(filtreMedian(image))), (image.getXDim() * image.getYDim()));
+                double[][] valHSV = normalisationHisto(discretisationHisto(histogrammeHSV(filtreMedian(image))), (image.getXDim() * image.getYDim()));
 
-            insertHistoBDD(nomImage, valRGB, valHSV);
+                insertHistoBDD(nomImage, valRGB, valHSV);
+            }
         }
         outPut += Instant.now() + ": Traitement d'initialisation terminé \n";
     }

@@ -6,7 +6,6 @@ import Vue.Vue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.Instant;
-import java.util.Arrays;
 
 public class ControllerNbImageOut implements ActionListener {
     private ResearchPicture model;
@@ -29,8 +28,8 @@ public class ControllerNbImageOut implements ActionListener {
             model.clearImageMap();
             model.setNbImageOut(Integer.parseInt(vue.getjTextFieldNumberImage().getText()));
             model.similarite(vue.getjTextFieldNameImage().getText());
-            vue.makeJpanelResult();
         }
+        vue.setAfficheImageTab(model.getNbImageMap(model.getNbImageOut()));
         vue.setjTextAreaLog(model.getOutPut());
     }
 }

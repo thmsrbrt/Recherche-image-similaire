@@ -27,10 +27,10 @@ public class ControllerSearch implements ActionListener {
         if (e.getSource() == vue.getjButtonValideRecherche()) {
             model.clearImageMap();
             model.similarite(vue.getjTextFieldNameImage().getText());
-            vue.makeJpanelResult();
-            vue.makeJPanelImageRef();
         }
         vue.setjLabelNomImageRef("Nom de l'image : ");
+        vue.setImage("motos/");
+        vue.setAfficheImageTab(model.getNbImageMap(model.getNbImageOut()));
         vue.setjTextAreaLog(model.getOutPut());
     }
 }

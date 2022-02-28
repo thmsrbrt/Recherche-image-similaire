@@ -1,11 +1,5 @@
 package Model;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
-import fr.unistra.pelican.ByteImage;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartUtilities;
@@ -16,15 +10,14 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import fr.unistra.pelican.Image;
-import fr.unistra.pelican.algorithms.io.ImageLoader;
-import fr.unistra.pelican.algorithms.visualisation.Viewer2D;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class HistogramTools {
 
     /**
      *
-     * @throws IOException
      */
     public static void plotHistogram(double [] histogram, String titre) throws IOException{
 
@@ -52,7 +45,6 @@ public class HistogramTools {
     }
 
     /**
-     * @throws IOException
      */
     public static void saveHistogram(double [] histogram, String pathToSave) throws IOException{
 

@@ -14,8 +14,8 @@ public class SegmentationTools {
     /**
      * Seuillage naif d'une image en niveaux de gris
      * @param img en niveaux de gris
-     * @param threshold
-     * @return
+     * @param threshold entier
+     * @return result
      */
     public static Image thresholding(Image img, int threshold){
 
@@ -42,7 +42,7 @@ public class SegmentationTools {
     public static void main(String[] args) {
 
         //Charger une image en memoire
-        Image test= ImageLoader.exec("/home/ckurtz/Bureau/foie.jpg");
+        Image test= ImageLoader.exec("/home/eee/Bureau/foie.jpg");
 
         Image segmentation=thresholding(test,128);
 

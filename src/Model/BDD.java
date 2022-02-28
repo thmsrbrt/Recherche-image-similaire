@@ -1,12 +1,12 @@
 package Model;
 
 import java.sql.*;
-import java.util.ArrayList;
 
 public class BDD {
+    private static int id = 0;
     private Connection conn;
     private final String drop = "DROP TABLE Image;";
-    private String tableImage = "CREATE TABLE Image (" +
+    private final String tableImage = "CREATE TABLE Image (" +
             "id INT primary key AUTO_INCREMENT," +
             "nom VARCHAR(255) not null, " +
             "histosRGB TEXT not null," +
@@ -70,7 +70,7 @@ public class BDD {
             prep.setString(2, histoRGB);
             prep.setString(3, histoHSV);
             prep.executeUpdate();
-            System.err.println("insert ok");
+            System.err.println("insert ok : " + id++);
         } catch (SQLException e) {
             System.err.println("ERREUR lors de insertion : " + e);
         }
