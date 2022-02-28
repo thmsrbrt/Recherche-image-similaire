@@ -9,7 +9,8 @@ public class BDD {
     private String tableImage = "CREATE TABLE Image (" +
             "id INT primary key AUTO_INCREMENT," +
             "nom VARCHAR(255) not null, " +
-            "histos TEXT not null" +
+            "histosRGB TEXT not null," +
+            "histosHSV TEXT NOT NULL" +
             ");";
 
 
@@ -59,14 +60,15 @@ public class BDD {
     /**
      * Insertion des données dans la table Image
      * @param nom de l'image associée
-     * @param histo histogramme de l'image associée
+     * @param histoRGB histogramme de l'image associée
      */
-    public void insertToImage(String nom, String histo) {
+    public void insertToImage(String nom, String histoRGB, String histoHSV) {
         try {
-            String sql = "INSERT INTO Image(nom, histos) VALUES (?, ?)";
+            String sql = "INSERT INTO Image(nom, histosRGB, histosHSV) VALUES (?, ?, ?)";
             PreparedStatement prep = conn.prepareStatement(sql);
             prep.setString(1, nom);
-            prep.setString(2, histo);
+            prep.setString(2, histoRGB);
+            prep.setString(3, histoHSV);
             prep.executeUpdate();
             System.err.println("insert ok");
         } catch (SQLException e) {
@@ -74,59 +76,33 @@ public class BDD {
         }
     }
 
-    public String getImageByName(String name) {
+    public String getImageByName(String name, boolean typeHisto) {
         try {
-            String requete = "SELECT nom, histos FROM Image WHERE nom = ?";
+            String requete = "SELECT nom, " + (typeHisto ? "histosRGB" : "histosHSV") +  " FROM Image WHERE nom = ?";
             PreparedStatement prep = conn.prepareStatement(requete);
             prep.setString(1, name);
             ResultSet resultSet = prep.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getString("histos");
+                return resultSet.getString((typeHisto ? "histosRGB" : "histosHSV"));
             }
         } catch (SQLException e) {
             System.err.println("ERREUR lors du select by name : " + e);
         }
+
         return null;
     }
 
-    /**
-     * Trouver des resemblances entre histogramme
-     * @param nbImg nombre d'image souhaité en sortie
-     * @param nomImgRef nom de l'image de référence
-     * @return une liste de nbImg images resemblent à l'image nomImgRef
-     * @throws SQLException erreur SQL
-     */
-    public ArrayList[][] resemblance(int nbImg, String nomImgRef) throws SQLException {
-        ArrayList[][] images = new ArrayList[nbImg][2];
-        int i = 0;
-        String req = "SELECT distance, nom FROM Image ORDER BY distance DESC LIMIT ?";
-        PreparedStatement prep = conn.prepareStatement(req);
-        prep.setInt(1, nbImg);
-        ResultSet tableResultat = prep.executeQuery(req);
-
-        if (!tableResultat.next())
-            System.out.println("aucune image (c'est louche)");
-        else {
-            do {
-                images[i][1].add(tableResultat.getString("nom"));
-                images[i][2].add(tableResultat.getString("distance"));
-                i++;
-            } while (tableResultat.next());
-        }
-        return images;
-    }
-
-    public String[] getAllImage() {
+    public String[] getAllImage(boolean typeHisto) {
         String [] images = new String[2];
         images[0] = "";
         images[1] = "";
         try {
-            String requete = "SELECT nom, histos FROM Image ORDER BY nom";
+            String requete = "SELECT nom, " + (typeHisto ? "histosRGB" : "histosHSV") +" FROM Image ORDER BY nom";
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(requete);
             while (resultSet.next()) {
                 images[0] += resultSet.getString("nom") + ";";
-                images[1] += resultSet.getString("histos") + "histo";
+                images[1] += resultSet.getString((typeHisto ? "histosRGB" : "histosHSV")) + "histo";
             }
         } catch (SQLException e) {
             System.err.println("ERREUR : select all from Image " + e);
