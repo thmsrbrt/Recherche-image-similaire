@@ -114,17 +114,35 @@ public class ResearchPicture {
     }
 
     /**
-     * TODO : methode
-     * @param image
-     * @return
+     * Créer un histogramme à partir d'une image
+     * @param image d'entrée
+     * @return un tab de TAILLE [3] [256]
      */
     private double[][] histogrammeHSV(Image image) {
+        double[][] histo = histogrammeRGB(image);
+        for (int i = 0; i < histo.length; i++) {
+            double M = Math.max(histo[0][i],Math.max(histo[1][i],histo[2][i]));
+            double m = Math.min(histo[0][i],Math.min(histo[1][i],histo[2][i]));
+            double V = M/255;
+            double S = 0;
+            double H = 0;
+            if (M > 0)
+                S = 1 - m/M;
+            else if (M == 0)
+                S = 0;
 
+            if (histo[1][i] >= histo[2][i])
+                H =  Math.cos((histo[0][i]- 1/2 * histo[1][i] - 1/2 * histo[2][i]) / Math.sqrt(Math.pow(histo[0][i],2)+ Math.pow(histo[1][i], 2) + Math.pow(histo[2][i], 2) - histo[0][i] * histo[1][i] - histo[0][i] * histo[2][i] - histo[1][i] * histo[2][i]));
+            else if (histo[1][i] > histo[2][i])
+                H = 360 - Math.cos((histo[0][i]- 1/2 * histo[1][i] - 1/2 * histo[2][i]) / Math.sqrt(Math.pow(histo[0][i],2)+ Math.pow(histo[1][i], 2) + Math.pow(histo[2][i], 2) - histo[0][i] * histo[1][i] - histo[0][i] * histo[2][i] - histo[1][i] * histo[2][i]));
+
+            histo[0][i] = H;
+            histo[1][i] = S;
+            histo[2][i] = V;
+        }
         outPut += Instant.now() + ": histogramme HSV créé \n";
-        System.out.println("here");
-        return histogrammeRGB(image);
+        return histo;
     }
-
 
         /**
          *
@@ -132,32 +150,7 @@ public class ResearchPicture {
          * @return histogramme de taille [32][3]
          */
     private double[][] discretisationHisto(double[][] histo) {
-        /*
-        int tailleHisto = histo[0].length;
-        int nbCanneaux = histo.length;
-        double[][] histoDecretisation = new double[nbCanneaux][tailleHisto/10];
-
-        for (int i = 0; i < nbCanneaux; i++)
-            for (int j = 0; j < tailleHisto/10; j++)
-                histoDecretisation[i][j] = 0;
-
-        int j = 0;
-        for (int i = 0; i < tailleHisto; i++) {
-            for (int k = 0; k < nbCanneaux; k++) {
-                if (!(i == 0) && i % 10 == 0 && k == 0)
-                    j++;
-                if (i >= 250)
-                    break;
-                //System.out.println(j + "teste" + " |i :" + i + " |j : " + k);
-                histoDecretisation[k][j] += histo[k][i];
-            }
-        }
-        //afficheHisto(histoDecretisation);
-
-        return histoDecretisation;
-         */
         outPut += Instant.now() + ": discrétisation effectué \n";
-
         return discretisationHistoDiv2(discretisationHistoDiv2(discretisationHistoDiv2(histo)));
     }
 
