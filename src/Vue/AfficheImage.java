@@ -17,7 +17,6 @@ public class AfficheImage extends JPanel {
     public AfficheImage(String nomFichier) {
         System.out.println("je lis une image");
         try {
-            System.out.println(nomFichier);
             image = ImageIO.read(new File(nomFichier));
             this.setPreferredSize(new Dimension(image.getWidth(),
                     image.getHeight()));
