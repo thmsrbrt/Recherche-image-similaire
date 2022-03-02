@@ -1,18 +1,28 @@
 # Recherche-image-similaire
 
+# Installation
+- Télécharger les sources
+- Remplacer dans la class `ResearchPicture.java` la variable racine par le chemin du dossier contenant les images
+- Remplacer dans la class `Vue.java` la variable dossier par `""` ou le dossier d'un type d'image
+- Mettre les bonnes variables dans le constructeur de la base de données pour initialiser la connection à votre BDD (url, name, password, jdbc)
+
+# Optimisation après installation
+- Mettre en commentaire l'initialisation du model dans la class `Vue.java` : `//this.model.init(this.dossier);`
+
+# Description des class
+
 ## Model :
-- la base de donnée
-- les différents processus de traitement d'image
-- l'objet model pour l'appli
+- `BDD.java` :  base de donnée
+- 3 class pour les différents processus de traitement d'image
 
 ## Vue
-- Vue de l'appli
-- une class pour gérer la lecture d'image
+- `Vue.java` : vue de l'appli
+- 2 class pour gérer la lecture d'image
 
 ## Controller
 - controller pour la barre de recherche
-- controller pour le type de traitement RGB ou HSV(en développent)
-- controller pour le nombre d'images souhaité en sortie (default 10)
+- controller pour le type de traitement RGB ou HSV
+- controller pour le nombre d'images souhaité en sortie (défaut 10)
 
 ## Test
 - une class pour tester indépendamment de la vue, la partie model
