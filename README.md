@@ -1,4 +1,6 @@
 # Recherche-image-similaire
+Projet réalisé dans le cadre d'une option pendant le semestre 4 de mon DUT Informatique. J'utilise la librairie Pelican Java pour la partie d'analyse d'images et Java Swing pour l'affichage.
+L'application permet d'afficher des images similaires à une image en entrée.
 
 # Installation
 - Télécharger les sources
